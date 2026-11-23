@@ -37,6 +37,8 @@ import java.util.Scanner;
 
 public class C_LongNotUpSubSeq {
 
+    private int[] sequence;
+
     public static void main(String[] args) throws FileNotFoundException {
         InputStream stream = B_LongDivComSubSeq.class.getResourceAsStream("dataC.txt");
         C_LongNotUpSubSeq instance = new C_LongNotUpSubSeq();
@@ -51,16 +53,70 @@ public class C_LongNotUpSubSeq {
         //общая длина последовательности
         int n = scanner.nextInt();
         int[] m = new int[n];
-        //читаем всю последовательность
+
         for (int i = 0; i < n; i++) {
             m[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи методами динамического программирования (!!!)
-        int result = 0;
 
+        scanner.close();
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Храним минимальные окончания преобразованной
+        // неубывающей подпоследовательности
+        long[] tails = new long[n];
+
+        // Индексы элементов, которыми заканчиваются подпоследовательности
+        int[] tailsIndex = new int[n];
+
+        // Предыдущий индекс для восстановления ответа
+        int[] previous = new int[n];
+
+        int length = 0;
+
+        for (int i = 0; i < n; i++) {
+            previous[i] = -1;
+
+            // Преобразуем задачу на невозрастающую
+            // последовательность в задачу на неубывающую
+            long value = -(long) m[i];
+
+            // Бинарный поиск первого элемента > value
+            int left = 0;
+            int right = length;
+
+            while (left < right) {
+                int middle = left + (right - left) / 2;
+
+                if (tails[middle] <= value) {
+                    left = middle + 1;
+                } else {
+                    right = middle;
+                }
+            }
+
+            int position = left;
+
+            if (position > 0) {
+                previous[i] = tailsIndex[position - 1];
+            }
+
+            tails[position] = value;
+            tailsIndex[position] = i;
+
+            if (position == length) {
+                length++;
+            }
+        }
+
+        // Восстанавливаем индексы подпоследовательности
+        sequence = new int[length];
+
+        int index = tailsIndex[length - 1];
+
+        for (int i = length - 1; i >= 0; i--) {
+            sequence[i] = index + 1;
+            index = previous[index];
+        }
+
+        return length;
     }
-
 }
