@@ -72,26 +72,91 @@ public class C_HeapMax {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! НАЧАЛО ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         //тут запишите ваше решение.
         //Будет мало? Ну тогда можете его собрать как Generic и/или использовать в варианте B
+
         private List<Long> heap = new ArrayList<>();
 
-        int siftDown(int i) { //просеивание вверх
+        // Просеивание вниз
+        int siftDown(int i) {
+            int maxIndex = i;
+
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+
+            // Ищем наибольший элемент среди родителя и детей
+            if (left < heap.size() && heap.get(left) > heap.get(maxIndex)) {
+                maxIndex = left;
+            }
+
+            if (right < heap.size() && heap.get(right) > heap.get(maxIndex)) {
+                maxIndex = right;
+            }
+
+            // Если один из детей больше родителя, меняем их местами
+            if (i != maxIndex) {
+                Long temp = heap.get(i);
+                heap.set(i, heap.get(maxIndex));
+                heap.set(maxIndex, temp);
+
+                // Продолжаем просеивание
+                siftDown(maxIndex);
+            }
+
+            return maxIndex;
+        }
+
+        // Просеивание вверх
+        int siftUp(int i) {
+            while (i > 0) {
+                int parent = (i - 1) / 2;
+
+                // Если родитель уже больше или равен элементу,
+                // куча восстановлена
+                if (heap.get(parent) >= heap.get(i)) {
+                    break;
+                }
+
+                // Меняем родителя и ребёнка местами
+                Long temp = heap.get(parent);
+                heap.set(parent, heap.get(i));
+                heap.set(i, temp);
+
+                i = parent;
+            }
 
             return i;
         }
 
-        int siftUp(int i) { //просеивание вниз
+        // Вставка элемента
+        void insert(Long value) {
+            heap.add(value);
 
-            return i;
+            // Восстанавливаем свойство кучи
+            siftUp(heap.size() - 1);
         }
 
-        void insert(Long value) { //вставка
-        }
+        // Извлечение и удаление максимума
+        Long extractMax() {
+            if (heap.isEmpty()) {
+                return null;
+            }
 
-        Long extractMax() { //извлечение и удаление максимума
-            Long result = null;
+            // Максимальный элемент всегда находится в корне
+            Long result = heap.get(0);
+
+            // Удаляем последний элемент
+            Long last = heap.remove(heap.size() - 1);
+
+            // Если куча ещё не пуста, ставим последний элемент в корень
+            if (!heap.isEmpty()) {
+                heap.set(0, last);
+
+                // Восстанавливаем свойство кучи
+                siftDown(0);
+            }
 
             return result;
         }
+
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! КОНЕЦ ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
     }
 

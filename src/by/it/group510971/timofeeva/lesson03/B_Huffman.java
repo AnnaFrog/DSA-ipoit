@@ -57,10 +57,40 @@ public class B_Huffman {
         Integer length = scanner.nextInt();
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! НАЧАЛО ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         //тут запишите ваше решение
+// 1. Создаём таблицу соответствия: код -> буква
+        java.util.Map<String, Character> codes = new java.util.HashMap<>();
 
+        for (int i = 0; i < count; i++) {
+            String letter = scanner.next();
+            String code = scanner.next();
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! КОНЕЦ ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-        return result.toString(); //01001100100111
+            // Убираем двоеточие из записи "a:"
+            char symbol = letter.charAt(0);
+
+            codes.put(code, symbol);
+        }
+
+        // 2. Читаем закодированную строку
+        String encoded = scanner.next();
+
+        // 3. Декодируем строку
+        StringBuilder currentCode = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            currentCode.append(encoded.charAt(i));
+
+            String code = currentCode.toString();
+
+            // Если нашли соответствующий код, добавляем букву
+            if (codes.containsKey(code)) {
+                result.append(codes.get(code));
+                currentCode.setLength(0);
+            }
+        }
+
+        scanner.close();
+
+        return result.toString();
     }
 
 
