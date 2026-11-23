@@ -22,9 +22,40 @@ public class FiboC {
     }
 
     long fasterC(long n, int m) {
-        //Интуитивно найти решение не всегда просто и
-        //возможно потребуется дополнительный поиск информации
-        return -1L;
+        long previous = 0;
+        long current = 1;
+        long period = 0;
+
+        // Находим период Пизано
+        for (long i = 0; i < 6L * m; i++) {
+            long next = (previous + current) % m;
+            previous = current;
+            current = next;
+
+            if (previous == 0 && current == 1) {
+                period = i + 1;
+                break;
+            }
+        }
+
+        // Уменьшаем n до значения внутри периода
+        long index = n % period;
+
+        // Вычисляем число Фибоначчи по модулю m
+        previous = 0;
+        current = 1;
+
+        if (index == 0) {
+            return 0;
+        }
+
+        for (long i = 2; i <= index; i++) {
+            long next = (previous + current) % m;
+            previous = current;
+            current = next;
+        }
+
+        return current;
     }
 
 
