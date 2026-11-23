@@ -16,6 +16,7 @@ package by.it.group510971.timofeeva.lesson02;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class C_GreedyKnapsack {
     public static void main(String[] args) throws FileNotFoundException {
@@ -26,34 +27,55 @@ public class C_GreedyKnapsack {
         System.out.printf("Общая стоимость %f (время %d)", costFinal, finishTime - startTime);
     }
 
+
     double calc(InputStream inputStream) throws FileNotFoundException {
         Scanner input = new Scanner(inputStream);
-        int n = input.nextInt();      //сколько предметов в файле
-        int W = input.nextInt();      //какой вес у рюкзака
-        Item[] items = new Item[n];   //получим список предметов
-        for (int i = 0; i < n; i++) { //создавая каждый конструктором
+
+        int n = input.nextInt();      // количество предметов
+        int W = input.nextInt();      // вместимость рюкзака
+
+        Item[] items = new Item[n];
+
+        for (int i = 0; i < n; i++) {
             items[i] = new Item(input.nextInt(), input.nextInt());
         }
-        //покажем предметы
+
+        // Показываем предметы
         for (Item item : items) {
             System.out.println(item);
         }
+
         System.out.printf("Всего предметов: %d. Рюкзак вмещает %d кг.\n", n, W);
 
-        //тут необходимо реализовать решение задачи
-        //итогом является максимально воможная стоимость вещей в рюкзаке
-        //вещи можно резать на кусочки (непрерывный рюкзак)
+        // Сортируем предметы по стоимости единицы веса
+        Arrays.sort(items);
+
         double result = 0;
-        //тут реализуйте алгоритм сбора рюкзака
-        //будет особенно хорошо, если с собственной сортировкой
-        //кроме того, можете описать свой компаратор в классе Item
+        double remainingWeight = W;
 
-        //ваше решение.
+        // Набираем рюкзак от самых выгодных предметов
+        for (Item item : items) {
 
+            if (remainingWeight <= 0) {
+                break;
+            }
+
+            // Сколько веса предмета можно взять
+            double takenWeight = Math.min(remainingWeight, item.weight);
+
+            // Добавляем стоимость взятой части предмета
+            result += takenWeight * item.cost / item.weight;
+
+            // Уменьшаем оставшуюся вместимость
+            remainingWeight -= takenWeight;
+        }
 
         System.out.printf("Удалось собрать рюкзак на сумму %f\n", result);
+
+        input.close();
         return result;
     }
+
 
     private static class Item implements Comparable<Item> {
         int cost;
@@ -74,10 +96,10 @@ public class C_GreedyKnapsack {
 
         @Override
         public int compareTo(Item o) {
-            //тут может быть ваш компаратор
-
-
-            return 0;
+            return Long.compare(
+                    (long) o.cost * this.weight,
+                    (long) this.cost * o.weight
+            );
         }
     }
 }
