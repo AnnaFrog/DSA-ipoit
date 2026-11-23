@@ -10,6 +10,39 @@ public class ListB<E> implements List<E> {
 
     //Создайте аналог списка БЕЗ использования других классов СТАНДАРТНОЙ БИБЛИОТЕКИ
 
+    // Узел связного списка: значение и ссылка на следующий элемент
+    private class Node {
+        E data;
+        Node next;
+
+        Node(E data) {
+            this.data = data;
+        }
+    }
+
+    // Первый элемент списка
+    private Node head;
+
+    // Количество элементов
+    private int size = 0;
+
+    // Находим узел по индексу
+    private Node getNode(int index) {
+        Node current = head;
+
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+
+        return current;
+    }
+
+    // Проверяем индекс существующего элемента
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
     /////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
     //////               Обязательные к реализации методы             ///////
@@ -17,72 +50,186 @@ public class ListB<E> implements List<E> {
     /////////////////////////////////////////////////////////////////////////
     @Override
     public String toString() {
-        return "";
+        String result = "[";
+        Node current = head;
+
+        // Последовательно проходим по всем узлам
+        while (current != null) {
+            result += current.data;
+
+            if (current.next != null) {
+                result += ", ";
+            }
+
+            current = current.next;
+        }
+
+        return result + "]";
     }
 
     @Override
     public boolean add(E e) {
-        return false;
+        Node newNode = new Node(e);
+
+        // Если список пустой, новый узел становится первым
+        if (head == null) {
+            head = newNode;
+        } else {
+            Node current = head;
+
+            // Доходим до последнего узла
+            while (current.next != null) {
+                current = current.next;
+            }
+
+            current.next = newNode;
+        }
+
+        size++;
+        return true;
     }
 
     @Override
     public E remove(int index) {
-        return null;
+        checkIndex(index);
+
+        Node removed;
+
+        // Если удаляем первый элемент, меняем голову списка
+        if (index == 0) {
+            removed = head;
+            head = head.next;
+        } else {
+            Node previous = getNode(index - 1);
+            removed = previous.next;
+
+            // Связываем предыдущий узел со следующим
+            previous.next = removed.next;
+        }
+
+        size--;
+        return removed.data;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public void add(int index, E element) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException();
+        }
 
+        Node newNode = new Node(element);
+
+        // Вставка в начало
+        if (index == 0) {
+            newNode.next = head;
+            head = newNode;
+        } else {
+            Node previous = getNode(index - 1);
+
+            // Вставляем новый узел между двумя существующими
+            newNode.next = previous.next;
+            previous.next = newNode;
+        }
+
+        size++;
     }
 
     @Override
     public boolean remove(Object o) {
+        Node current = head;
+        Node previous = null;
+
+        while (current != null) {
+            if (o == null ? current.data == null : o.equals(current.data)) {
+                if (previous == null) {
+                    head = current.next;
+                } else {
+                    previous.next = current.next;
+                }
+
+                size--;
+                return true;
+            }
+
+            previous = current;
+            current = current.next;
+        }
+
         return false;
     }
 
     @Override
     public E set(int index, E element) {
-        return null;
-    }
+        checkIndex(index);
 
+        Node node = getNode(index);
+        E oldValue = node.data;
+
+        node.data = element;
+        return oldValue;
+    }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
-
 
     @Override
     public void clear() {
-
+        head = null;
+        size = 0;
     }
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        Node current = head;
+        int index = 0;
+
+        while (current != null) {
+            if (o == null ? current.data == null : o.equals(current.data)) {
+                return index;
+            }
+
+            current = current.next;
+            index++;
+        }
+
+        return -1;
     }
 
     @Override
     public E get(int index) {
-        return null;
+        checkIndex(index);
+        return getNode(index).data;
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return indexOf(o) != -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        Node current = head;
+        int index = 0;
+        int result = -1;
+
+        while (current != null) {
+            if (o == null ? current.data == null : o.equals(current.data)) {
+                result = index;
+            }
+
+            current = current.next;
+            index++;
+        }
+
+        return result;
     }
-
-
     /////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
     //////               Опциональные к реализации методы             ///////

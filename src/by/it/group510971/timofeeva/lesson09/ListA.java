@@ -7,6 +7,31 @@ import java.util.ListIterator;
 
 public class ListA<E> implements List<E> {
 
+    // Внутренний массив для хранения элементов списка
+    private Object[] elements = new Object[10];
+
+    // Текущее количество элементов
+    private int size = 0;
+
+    // Увеличиваем массив, если свободного места больше нет
+    private void ensureCapacity() {
+        if (size == elements.length) {
+            Object[] newElements = new Object[elements.length * 2];
+
+            for (int i = 0; i < size; i++) {
+                newElements[i] = elements[i];
+            }
+
+            elements = newElements;
+        }
+    }
+
+    // Проверяем, что индекс указывает на существующий элемент
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
     //Создайте аналог списка БЕЗ использования других классов СТАНДАРТНОЙ БИБЛИОТЕКИ
 
     /////////////////////////////////////////////////////////////////////////
@@ -16,22 +41,51 @@ public class ListA<E> implements List<E> {
     /////////////////////////////////////////////////////////////////////////
     @Override
     public String toString() {
-        return "";
+        String result = "[";
+
+        for (int i = 0; i < size; i++) {
+            if (i > 0) {
+                result += ", ";
+            }
+            result += elements[i];
+        }
+
+        return result + "]";
     }
 
     @Override
     public boolean add(E e) {
-        return false;
+        // Добавляем элемент в конец списка
+        ensureCapacity();
+        elements[size] = e;
+        size++;
+
+        return true;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public E remove(int index) {
-        return null;
+        checkIndex(index);
+
+        // Запоминаем удаляемый элемент
+        E removed = (E) elements[index];
+
+        // Сдвигаем все следующие элементы на одну позицию влево
+        for (int i = index; i < size - 1; i++) {
+            elements[i] = elements[i + 1];
+        }
+
+        // Освобождаем последнюю ячейку
+        elements[size - 1] = null;
+        size--;
+
+        return removed;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     /////////////////////////////////////////////////////////////////////////
