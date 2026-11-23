@@ -36,21 +36,72 @@ public class B_MergeSort {
         Scanner scanner = new Scanner(stream);
         //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
 
-        //размер массива
+        // Размер массива
         int n = scanner.nextInt();
-        //сам массив
+
+        // Читаем массив
         int[] a = new int[n];
+
         for (int i = 0; i < n; i++) {
             a[i] = scanner.nextInt();
-            System.out.println(a[i]);
         }
 
-        // тут ваше решение (реализуйте сортировку слиянием)
-        // https://ru.wikipedia.org/wiki/Сортировка_слиянием
+        // Запускаем сортировку слиянием
+        mergeSort(a, 0, n - 1);
 
-
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        scanner.close();
         return a;
+    }
+
+    // Рекурсивное разделение массива
+    void mergeSort(int[] a, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+
+        int middle = left + (right - left) / 2;
+
+        // Сортируем левую половину
+        mergeSort(a, left, middle);
+
+        // Сортируем правую половину
+        mergeSort(a, middle + 1, right);
+
+        // Объединяем отсортированные половины
+        merge(a, left, middle, right);
+    }
+
+    // Слияние двух отсортированных частей
+    void merge(int[] a, int left, int middle, int right) {
+        int[] temp = new int[right - left + 1];
+
+        int i = left;
+        int j = middle + 1;
+        int k = 0;
+
+        // Сравниваем элементы обеих частей
+        while (i <= middle && j <= right) {
+            if (a[i] <= a[j]) {
+                temp[k++] = a[i++];
+            } else {
+                temp[k++] = a[j++];
+            }
+        }
+
+        // Копируем оставшиеся элементы левой части
+        while (i <= middle) {
+            temp[k++] = a[i++];
+        }
+
+        // Копируем оставшиеся элементы правой части
+        while (j <= right) {
+            temp[k++] = a[j++];
+        }
+
+        // Возвращаем результат в исходный массив
+        for (int index = 0; index < temp.length; index++) {
+            a[left + index] = temp[index];
+        }
     }
 
 

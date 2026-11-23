@@ -47,18 +47,65 @@ public class C_GetInversions {
         //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
         //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!
-        //размер массива
         int n = scanner.nextInt();
-        //сам массив
         int[] a = new int[n];
+
         for (int i = 0; i < n; i++) {
             a[i] = scanner.nextInt();
         }
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!     тут ваше решение   !!!!!!!!!!!!!!!!!!!!!!!!
 
+        scanner.close();
+
+        return (int) countInversions(a, 0, n - 1);
+    }
+
+    long countInversions(int[] a, int left, int right) {
+        if (left >= right) {
+            return 0;
+        }
+
+        int middle = left + (right - left) / 2;
+
+        long count = 0;
+        count += countInversions(a, left, middle);
+        count += countInversions(a, middle + 1, right);
+        count += mergeAndCount(a, left, middle, right);
+
+        return count;
+    }
+
+    long mergeAndCount(int[] a, int left, int middle, int right) {
+        int[] temp = new int[right - left + 1];
+
+        int i = left;
+        int j = middle + 1;
+        int k = 0;
+
+        long count = 0;
+
+        while (i <= middle && j <= right) {
+            if (a[i] <= a[j]) {
+                temp[k++] = a[i++];
+            } else {
+                temp[k++] = a[j++];
+                count += middle - i + 1;
+            }
+        }
+
+        while (i <= middle) {
+            temp[k++] = a[i++];
+        }
+
+        while (j <= right) {
+            temp[k++] = a[j++];
+        }
+
+        for (int index = 0; index < temp.length; index++) {
+            a[left + index] = temp[index];
+        }
+
+        return count;
 
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
     }
 }
