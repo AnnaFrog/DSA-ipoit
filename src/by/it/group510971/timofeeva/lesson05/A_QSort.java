@@ -49,29 +49,75 @@ public class A_QSort {
         //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
         //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        //число отрезков отсортированного массива
         int n = scanner.nextInt();
-        Segment[] segments = new Segment[n];
-        //число точек
         int m = scanner.nextInt();
+
+        int[] starts = new int[n];
+        int[] ends = new int[n];
         int[] points = new int[m];
         int[] result = new int[m];
 
-        //читаем сами отрезки
         for (int i = 0; i < n; i++) {
-            //читаем начало и конец каждого отрезка
-            segments[i] = new Segment(scanner.nextInt(), scanner.nextInt());
+            int start = scanner.nextInt();
+            int stop = scanner.nextInt();
+
+            starts[i] = Math.min(start, stop);
+            ends[i] = Math.max(start, stop);
         }
-        //читаем точки
+
         for (int i = 0; i < m; i++) {
             points[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи с применением быстрой сортировки
-        //в классе отрезка Segment реализуйте нужный для этой задачи компаратор
 
+        scanner.close();
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        java.util.Arrays.sort(starts);
+        java.util.Arrays.sort(ends);
+
+        for (int i = 0; i < m; i++) {
+            int x = points[i];
+
+            int started = upperBound(starts, x);
+            int finished = lowerBound(ends, x);
+
+            result[i] = started - finished;
+        }
+
         return result;
+    }
+
+    int upperBound(int[] a, int value) {
+        int left = 0;
+        int right = a.length;
+
+        while (left < right) {
+            int middle = left + (right - left) / 2;
+
+            if (a[middle] <= value) {
+                left = middle + 1;
+            } else {
+                right = middle;
+            }
+        }
+
+        return left;
+    }
+
+    int lowerBound(int[] a, int value) {
+        int left = 0;
+        int right = a.length;
+
+        while (left < right) {
+            int middle = left + (right - left) / 2;
+
+            if (a[middle] < value) {
+                left = middle + 1;
+            } else {
+                right = middle;
+            }
+        }
+
+        return left;
     }
 
     //отрезок
